@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#101510" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23c5e36b'/%3E%3Ctext x='4' y='22' font-family='monospace' font-size='14' font-weight='bold' fill='%23182014'%3EIM%3C/text%3E%3C/svg%3E" />
+  <title>IRON MERIDIAN — Combat Test Range</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Iron Meridian home"><span class="brand-mark">IM</span><span>IRON<span class="brand-light"> MERIDIAN</span><small>COMBAT TEST RANGE / 01</small></span></a>
+      <div class="mission"><span class="live-dot"></span><span>OPERATION DUSTLINE</span><b> • </b><span>SECTOR 04</span></div>
+      <div class="top-actions"><span class="sim-badge">SIM <i>LIVE</i></span><button id="pauseBtn" class="icon-btn" aria-label="Pause simulation">Ⅱ</button></div>
+    </header>
+
+    <section class="game-layout">
+      <aside class="left-panel panel">
+        <div class="panel-kicker">MISSION BRIEF <span>01 / 03</span></div>
+        <h1>Break the<br/><em>line.</em></h1>
+        <p class="brief-copy">Neutralize hostile armor in the valley. Every vehicle is a system: disable its crew, engine, or ammunition to take it out of action.</p>
+        <div class="objective"><span class="objective-icon">◎</span><div><b>PRIMARY OBJECTIVE</b><span>Disable all hostile vehicles</span></div></div>
+        <div class="progress-wrap"><div class="progress-label"><span>HOSTILES DISABLED</span><b id="objectiveCount">0 / 3</b></div><div class="progress-track"><i id="objectiveProgress"></i></div></div>
+        <div class="section-divider"></div>
+        <div class="panel-kicker">YOUR VEHICLE <span>MBT / 01</span></div>
+        <div class="vehicle-name"><div class="tank-crest">▰</div><div><b>STRV-91 “LANCER”</b><small>MAIN BATTLE TANK</small></div></div>
+        <div class="systems-list">
+          <div class="system-row"><span>ENGINE</span><div class="mini-bar"><i id="engineBar"></i></div><b id="enginePct">100%</b></div>
+          <div class="system-row"><span>TRACKS</span><div class="mini-bar"><i id="trackBar"></i></div><b id="trackPct">100%</b></div>
+          <div class="system-row"><span>CREW</span><div class="crew-dots"><i></i><i></i><i></i><i></i></div><b id="crewPct">4 / 4</b></div>
+        </div>
+        <div class="section-divider"></div>
+        <div class="panel-kicker">FIRE CONTROL <span>READY</span></div>
+        <div class="ammo-select"><button class="ammo-option active" data-ammo="AP">AP <small>ARMOR PIERCING</small><b>12</b></button><button class="ammo-option" data-ammo="HE">HE <small>HIGH EXPLOSIVE</small><b>08</b></button></div>
+        <div class="shell-note"><span class="shell-symbol">⌁</span><span id="ammoDescription">High velocity • penetrator core<br/>Best against angled armor</span></div>
+        <div class="left-tip"><span>i</span> IMPACT ANGLE AND RANGE AFFECT PENETRATION</div>
+      </aside>
+
+      <section class="viewport-wrap">
+        <div class="viewport-top"><div><span class="eyebrow">LIVE FEED</span><b>RED ROCK VALLEY</b></div><div class="weather"><span>☀</span> CLEAR <i>•</i> 14:32 LOCAL</div><button id="mapBtn" class="small-button">⌖ <span>TACTICAL MAP</span></button></div>
+        <div class="viewport" id="viewport">
+          <canvas id="gameCanvas" aria-label="Playable combat simulator battlefield"></canvas>
+          <div class="scene-vignette"></div>
+          <div class="reticle" id="reticle"><span></span><i></i></div>
+          <div class="range-readout" id="rangeReadout"><b>---</b><small>RANGE / M</small></div>
+          <div class="compass"><span>N</span><div class="compass-line"></div><span id="headingReadout">000°</span></div>
+          <div class="battle-callout" id="battleCallout"><span class="callout-mark">!</span><span><b>HOSTILE ARMOR</b><small>2 VEHICLES DETECTED</small></span></div>
+          <div class="hit-feed" id="hitFeed" aria-live="polite"></div>
+          <div class="crosshair-hint" id="crosshairHint">TAP OR CLICK TO AIM</div>
+          <div class="aim-line"></div>
+          <div class="hit-flash" id="hitFlash"></div>
+          <div class="damage-xray" id="damageXray"><div class="xray-head"><b>IMPACT ANALYSIS</b><button id="closeXray" aria-label="Close impact analysis">×</button></div><div class="xray-body"><div class="xray-vehicle"><div class="xray-tank"><i class="crew c1"></i><i class="crew c2"></i><i class="ammo-rack"></i><i class="engine-block"></i></div></div><div class="xray-details"><span class="xray-label">TARGET SYSTEM</span><b id="xrayComponent">ENGINE BLOCK</b><span class="xray-result" id="xrayResult">DISABLED</span><div class="xray-stat"><span>ARMOR DEFEATED</span><b id="xrayArmor">— mm</b></div><div class="xray-stat"><span>IMPACT ANGLE</span><b id="xrayAngle">—°</b></div></div></div><div class="xray-foot">COMPONENT DAMAGE • NO GLOBAL HIT POINTS</div></div>
+          <div class="paused-overlay" id="pausedOverlay"><span>SIMULATION PAUSED</span><button id="resumeBtn">RESUME</button></div>
+          <div class="map-overlay" id="mapOverlay"><div class="map-card"><button id="closeMap" class="map-close">×</button><small>SECTOR 04 / TACTICAL PLOT</small><b>RED ROCK VALLEY</b><div class="map-grid"><span class="map-player">▲</span><span class="map-enemy e1">◆</span><span class="map-enemy e2">◆</span><span class="map-enemy e3">◆</span><span class="map-objective">◎</span></div><div class="map-legend"><span><i class="friendly-dot"></i> FRIENDLY</span><span><i class="enemy-dot"></i> HOSTILE</span></div></div></div>
+          <div class="mobile-controls"><div class="joystick" id="joystick"><div class="joy-knob" id="joyKnob"></div><span>MOVE</span></div><button id="mobileFire" class="fire-button"><span>●</span> FIRE</button><button id="mobileAim" class="aim-button">AIM</button></div>
+        </div>
+        <div class="viewport-bottom"><div class="telemetry"><span class="telemetry-icon">⌁</span><div><small>VELOCITY</small><b id="speedReadout">0 <i>km/h</i></b></div><div class="telemetry-sep"></div><div><small>HULL HEADING</small><b id="hullReadout">000<i>°</i></b></div><div class="telemetry-sep"></div><div><small>GUN ELEVATION</small><b id="elevationReadout">+02.0<i>°</i></b></div></div><div class="controls-hint"><span>WASD</span> DRIVE <span>MOUSE</span> AIM <span>SPACE</span> FIRE</div><div class="ammo-status"><i></i><span id="ammoStatus">AP READY</span><b id="ammoCount">12</b></div></div>
+      </section>
+
+      <aside class="right-panel panel">
+        <div class="panel-heading"><div><div class="panel-kicker">THREAT TRACKER <span class="threat-live">LIVE</span></div><h2>Battlefield</h2></div><button id="scanBtn" class="scan-button" aria-label="Scan battlefield">⌖</button></div>
+        <div class="threat-summary"><span>CONTACTS</span><b id="contactCount">03</b><i></i><span>HOSTILE</span></div>
+        <div class="contact-list" id="contactList"></div>
+        <div class="section-divider"></div>
+        <div class="panel-kicker">ENGAGEMENT DATA <span>CALCULATED</span></div>
+        <div class="engagement-card"><div class="engagement-heading"><span>SELECTED TARGET</span><b id="selectedTargetName">T-72M / ALPHA</b></div><div class="engagement-graphic"><div class="trajectory-line"></div><div class="range-target"></div><div class="range-player"></div><span id="rangeGraphicLabel">680 m</span></div><div class="engagement-stats"><div><small>EST. PENETRATION</small><b id="penReadout">248 <i>mm</i></b></div><div><small>FRONT ARMOR</small><b id="armorReadout">210 <i>mm</i></b></div><div><small>HIT PROBABILITY</small><b id="probReadout">78 <i>%</i></b></div></div><div class="pen-meter"><span id="penMeter"></span></div><p id="penHint">Front plate: favorable penetration window</p></div>
+        <div class="section-divider log-divider"></div>
+        <div class="log-heading"><div class="panel-kicker">COMBAT LOG</div><button id="clearLog">CLEAR</button></div>
+        <div class="combat-log" id="combatLog"><div class="log-entry"><time>14:32:08</time><span>Simulation online. Awaiting engagement.</span></div><div class="log-entry muted"><time>14:32:07</time><span>Thermal optics calibrated.</span></div><div class="log-entry muted"><time>14:32:05</time><span>All vehicle systems nominal.</span></div></div>
+        <div class="right-footer"><span class="connection-dot"></span> BALLISTIC COMPUTER <b>ACTIVE</b></div>
+      </aside>
+    </section>
+    <footer class="footer"><span>IRON MERIDIAN <i>•</i> ARMORED COMBAT SIMULATOR</span><span>PROTOTYPE BUILD 0.4.18 <i>•</i> PHYSICS TEST RANGE</span></footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
